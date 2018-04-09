@@ -24,7 +24,7 @@ public class Controller{
 	public Controller(){
         
 		view = new View();
-		model = new Model(view.getWidth(), view.getHeight(), view.getImageWidth(), view.getImageHeight(), view.getFrame(),view.getPanel());
+		model = new Model(view.getWidth(), view.getHeight(), view.getImageWidth(), view.getImageHeight(), view.getPanel());
         
         updateProgram = new AbstractAction(){
     		public void actionPerformed(ActionEvent e){
@@ -34,7 +34,7 @@ public class Controller{
                 if(isRun==true) {
                 	model.updateLocationAndDirection();
                 }
-                view.update(model.getX(), model.getY(), model.getDirect());
+                view.update(model.getX(), model.getY(), model.getDirect(), model.getMode());
     		}
     	};
     	b=view.getButton();

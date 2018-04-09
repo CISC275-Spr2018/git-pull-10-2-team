@@ -1,4 +1,5 @@
 import java.awt.Color;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -29,14 +30,21 @@ import javax.swing.*;
 
 class View extends JFrame{
 	final int frameCount = 10;
+	final int frameCountJump=8;
 	int picNum = 0;
+	int picNumJump=0;
 	int x;
 	int y;
 	Direction direction = Direction.NORTH;
+	Mode mode = Mode.FORWARD;
 	public BufferedImage[] pics;
 	public BufferedImage[] picsNorth;
 	public BufferedImage[] picsEast;
 	public BufferedImage[] picsWest;
+	public BufferedImage[] picsJump;
+	public BufferedImage[] picsNorthJump;
+	public BufferedImage[] picsEastJump;
+	public BufferedImage[] picsWestJump;
 	final static int frameWidth = 500;
     
 	final static int frameHeight = 300;
@@ -44,23 +52,35 @@ class View extends JFrame{
 	final static int imgWidth = 165;
     
 	final static int imgHeight = 165;
+	
+	final static int imgWidthJump = 165;
+    
+	final static int imgHeightJump = 165;
 	int createFrame=0;
 	JFrame frame = new JFrame();
 	JButton b=new JButton("Start");
-	boolean isRun=false;
 	JPanel p = new JPanel();
-	//Animation animation = new Animation(pics,picsNorth,picsEast,picsWest,imgWidth,imgHeight,frameCount);
 	class Animated extends DrawPanel{
 		public Animated() {
 			BufferedImage img = createImage(Direction.SOUTH);
 			BufferedImage imgNorth = createImage(Direction.NORTH);
 			BufferedImage imgEast = createImage(Direction.EAST);
 			BufferedImage imgWest = createImage(Direction.WEST);
+			
+			BufferedImage imgJump = createImageJump(Direction.SOUTH);
+			BufferedImage imgNorthJump = createImageJump(Direction.NORTH);
+			BufferedImage imgEastJump = createImageJump(Direction.EAST);
+			BufferedImage imgWestJump = createImageJump(Direction.WEST);
 		
 	    	pics = new BufferedImage[10];
 	    	picsNorth = new BufferedImage[10];
 	    	picsEast = new BufferedImage[10];
 	    	picsWest = new BufferedImage[10];
+	    	
+	    	picsJump = new BufferedImage[8];
+	    	picsNorthJump = new BufferedImage[8];
+	    	picsEastJump = new BufferedImage[8];
+	    	picsWestJump = new BufferedImage[8];
 	    	
 		
 	    	for(int i = 0; i < frameCount; i++) {
@@ -70,7 +90,30 @@ class View extends JFrame{
 	    		picsEast[i] = imgEast.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 	    		picsWest[i] = imgWest.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 	    	}
+	    	for(int i = 0; i < frameCountJump; i++) {	    		
+	    		picsJump[i] = imgJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
+	    		picsNorthJump[i] = imgNorthJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
+	    		picsEastJump[i] = imgEastJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
+	    		picsWestJump[i] = imgWestJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
+	    	}
 		}
+		
+		private BufferedImage createImageJump(Direction direction) {
+			BufferedImage bufferedImage;
+			
+	    	try {
+	    		bufferedImage = ImageIO.read(new File("images/orc/orc_jump_"+direction.toString()+".png"));
+	
+	    		return bufferedImage;
+	    	
+			} catch (IOException e) {
+		
+	    		e.printStackTrace();
+		
+	    	}
+			return null;
+		}
+		
 		private BufferedImage createImage(Direction direction){
 			
 	    	BufferedImage bufferedImage;
@@ -94,21 +137,42 @@ class View extends JFrame{
 	    	}
 		@Override
 		public void paint(Graphics g) {
-			picNum = (picNum + 1) % frameCount;
-			switch(direction) {	
-			case NORTH:
-				g.drawImage(picsNorth[picNum], x, y, Color.gray, this);
-				break;
-			case SOUTH:
-				g.drawImage(pics[picNum], x, y, Color.gray, this);
-				break;
-			case EAST:
-				g.drawImage(picsEast[picNum], x, y, Color.gray, this);
-				break;
-			default:
-				g.drawImage(picsWest[picNum], x, y, Color.gray, this);
-				break;
+			if(mode==Mode.FORWARD) {
+				picNum = (picNum + 1) % frameCount;
+				switch(direction) {	
+				case NORTH:
+					g.drawImage(picsNorth[picNum], x, y, Color.gray, this);
+					break;
+				case SOUTH:
+					g.drawImage(pics[picNum], x, y, Color.gray, this);
+					break;
+				case EAST:
+					g.drawImage(picsEast[picNum], x, y, Color.gray, this);
+					break;
+				default:
+					g.drawImage(picsWest[picNum], x, y, Color.gray, this);
+					break;
+				}
+			}else if(mode==Mode.JUMP) {
+				picNumJump=(picNumJump+1)%frameCountJump;
+				switch(direction) {	
+				case NORTH:
+					g.drawImage(picsNorthJump[picNumJump], x, y, Color.gray, this);
+					break;
+				case SOUTH:
+					g.drawImage(picsJump[picNumJump], x, y, Color.gray, this);
+					break;
+				case EAST:
+					g.drawImage(picsEastJump[picNumJump], x, y, Color.gray, this);
+					break;
+				default:
+					g.drawImage(picsWestJump[picNumJump], x, y, Color.gray, this);
+					break;
+				}
+			}else {
+				
 			}
+			
 		}
 		
 	}
@@ -141,11 +205,6 @@ class View extends JFrame{
 		frame.setFocusable(false);
 	}
 
-	//New method created to return the JFrame
-	public JFrame getFrame() {
-		return frame;
-	}
-	//End of new Method
 	public JPanel getPanel() {
 		return p;
 	}
@@ -165,10 +224,11 @@ class View extends JFrame{
 		return imgWidth;
 	}
 
-	public void update(int x, int y, Direction direction) {
+	public void update(int x, int y, Direction direction,Mode mode) {
 		this.x=x;
 		this.y=y;
 		this.direction=direction;
+		this.mode=mode;
 		frame.repaint();
         try {
 			

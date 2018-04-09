@@ -30,14 +30,16 @@ class Model{
 	int xloc = 0;
 	int yloc = 0;  
 	final int xIncr = 8;    
-	final int yIncr = 4;
+	final int yIncr = 8;
 	Direction direction = Direction.NORTH;
+	Mode mode=Mode.FORWARD;
+	int count=0;
 	
 	//New code added to implement keystrokes changing the direction of the orc
-	JFrame frame;
+	
 	JPanel j;
-	public Model(int width,int height,int imageWidth,int imageHeight, JFrame frame, JPanel j) {
-		this.frame=frame;
+	public Model(int width,int height,int imageWidth,int imageHeight, JPanel j) {
+		
 		this.j=j;
 		j.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP,0), "up");
 		j.getActionMap().put("up", new AbstractAction() {
@@ -65,6 +67,14 @@ class Model{
             @Override
             public void actionPerformed(ActionEvent e) {
             	direction=Direction.EAST;
+            }
+        });
+		
+		j.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_J,0),"j");
+		j.getActionMap().put("j", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	mode=Mode.JUMP;
             }
         });
 		this.width=width;
@@ -100,6 +110,16 @@ class Model{
 			break;
 		}
 	}	
+	public Mode getMode() {
+		if(mode==Mode.JUMP) {
+			count++;
+		}
+		if(count==9) {
+			mode=Mode.FORWARD;
+			count=0;
+		}
+		return mode;
+	}
 	public int getX() {
 		return xloc;
 	}
