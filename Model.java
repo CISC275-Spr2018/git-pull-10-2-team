@@ -31,8 +31,8 @@ class Model{
 	int yloc = 0;  
 	final int xIncr = 8;    
 	final int yIncr = 8;
-	Direction direction = Direction.NORTH;
-	Mode mode=Mode.FORWARD;
+	Direction direction = Direction.EAST;
+	Mode mode=Mode.IDLE;
 	int count=0;
 	
 	//New code added to implement keystrokes changing the direction of the orc
@@ -119,6 +119,9 @@ class Model{
 			count=0;
 		}
 		return mode;
+	}
+	public void setMode(Mode m) {
+		mode = m;
 	}
 	public int getX() {
 		return xloc;

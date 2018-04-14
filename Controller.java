@@ -41,9 +41,13 @@ public class Controller{
     	b.addActionListener(new ActionListener(){  
 			public void actionPerformed(ActionEvent e){  
 			            if(isRun==false) {
-			            	isRun=true;    	
+			            	isRun=true; 
+			            	b.setText("Stop");
+			            	model.setMode(Mode.FORWARD);
 			            } else {
 			            	isRun=false;
+			            	b.setText("Start");
+			            	model.setMode(Mode.IDLE);
 			            }
 			}
 			    }); 

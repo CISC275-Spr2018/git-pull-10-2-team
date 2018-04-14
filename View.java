@@ -31,12 +31,14 @@ import javax.swing.*;
 class View extends JFrame{
 	final int frameCount = 10;
 	final int frameCountJump=8;
+	final int frameCountIdle=4;
 	int picNum = 0;
 	int picNumJump=0;
+	int picNumIdle=0;
 	int x;
 	int y;
-	Direction direction = Direction.NORTH;
-	Mode mode = Mode.FORWARD;
+	Direction direction = Direction.EAST;
+	Mode mode = Mode.IDLE;
 	public BufferedImage[] pics;
 	public BufferedImage[] picsNorth;
 	public BufferedImage[] picsEast;
@@ -45,6 +47,10 @@ class View extends JFrame{
 	public BufferedImage[] picsNorthJump;
 	public BufferedImage[] picsEastJump;
 	public BufferedImage[] picsWestJump;
+	public BufferedImage[] picsEastIdle;
+	public BufferedImage[] picsWestIdle;
+	public BufferedImage[] picsNorthIdle;
+	public BufferedImage[] picsSouthIdle;
 	final static int frameWidth = 500;
     
 	final static int frameHeight = 300;
@@ -62,16 +68,18 @@ class View extends JFrame{
 	JPanel p = new JPanel();
 	class Animated extends DrawPanel{
 		public Animated() {
-			BufferedImage img = createImage(Direction.SOUTH);
-			BufferedImage imgNorth = createImage(Direction.NORTH);
-			BufferedImage imgEast = createImage(Direction.EAST);
-			BufferedImage imgWest = createImage(Direction.WEST);
+			BufferedImage img = createImage(Direction.SOUTH, Mode.FORWARD);
+			BufferedImage imgNorth = createImage(Direction.NORTH, Mode.FORWARD);
+			BufferedImage imgEast = createImage(Direction.EAST, Mode.FORWARD);
+			BufferedImage imgWest = createImage(Direction.WEST, Mode.FORWARD);
 			
-			BufferedImage imgJump = createImageJump(Direction.SOUTH);
-			BufferedImage imgNorthJump = createImageJump(Direction.NORTH);
-			BufferedImage imgEastJump = createImageJump(Direction.EAST);
-			BufferedImage imgWestJump = createImageJump(Direction.WEST);
-		
+			BufferedImage imgJump = createImage(Direction.SOUTH, Mode.JUMP);
+			BufferedImage imgNorthJump = createImage(Direction.NORTH, Mode.JUMP);
+			BufferedImage imgEastJump = createImage(Direction.EAST, Mode.JUMP);
+			BufferedImage imgWestJump = createImage(Direction.WEST, Mode.JUMP);
+			
+			BufferedImage imgIdle = createImage(Direction.ALL, Mode.IDLE);
+			
 	    	pics = new BufferedImage[10];
 	    	picsNorth = new BufferedImage[10];
 	    	picsEast = new BufferedImage[10];
@@ -82,9 +90,13 @@ class View extends JFrame{
 	    	picsEastJump = new BufferedImage[8];
 	    	picsWestJump = new BufferedImage[8];
 	    	
+	    	picsEastIdle = new BufferedImage[4];
+	    	picsWestIdle = new BufferedImage[4];
+	    	picsNorthIdle = new BufferedImage[4];
+	    	picsSouthIdle = new BufferedImage[4];
+	    	
 		
 	    	for(int i = 0; i < frameCount; i++) {
-		
 	    		pics[i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 	    		picsNorth[i] = imgNorth.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
 	    		picsEast[i] = imgEast.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
@@ -96,30 +108,24 @@ class View extends JFrame{
 	    		picsEastJump[i] = imgEastJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
 	    		picsWestJump[i] = imgWestJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
 	    	}
-		}
-		
-		private BufferedImage createImageJump(Direction direction) {
-			BufferedImage bufferedImage;
-			
-	    	try {
-	    		bufferedImage = ImageIO.read(new File("images/orc/orc_jump_"+direction.toString()+".png"));
-	
-	    		return bufferedImage;
 	    	
-			} catch (IOException e) {
-		
-	    		e.printStackTrace();
-		
+	    	for(int i = 0; i < frameCountIdle; i++) {	    		
+	    		picsEastIdle[i] = imgIdle.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+	    		picsWestIdle[i] = imgIdle.getSubimage(imgWidth*i, imgHeight, imgWidth, imgHeight);
+	    		picsNorthIdle[i] = imgIdle.getSubimage(imgWidth*i, imgHeight*2, imgWidth, imgHeight);
+	    		picsSouthIdle[i] = imgIdle.getSubimage(imgWidth*i, imgHeight*3, imgWidth, imgHeight);
 	    	}
-			return null;
-		}
+		}	
 		
-		private BufferedImage createImage(Direction direction){
+		private BufferedImage createImage(Direction direction, Mode mode){
 			
 	    	BufferedImage bufferedImage;
 		
-	    	try {
-	    		bufferedImage = ImageIO.read(new File("images/orc/orc_forward_"+direction.toString()+".png"));
+	    	try { //Please look into; For some reason direction.toString() was giving me an error for Direction.ALL. May just be my computer.
+	    		if (mode!=mode.IDLE)
+	    			bufferedImage = ImageIO.read(new File("images/orc/orc_"+mode.toString()+"_"+direction.toString()+".png"));
+	    		else
+	    			bufferedImage = ImageIO.read(new File("images/orc/orc_"+mode.toString()+"_ewns.png")); 
 	
 	    		return bufferedImage;
 	    	
@@ -130,10 +136,6 @@ class View extends JFrame{
 	    	}
 	    	
 			return null;
-
-	    	
-	    	// TODO: Change this method so you can load other orc animation bitmaps
-
 	    	}
 		@Override
 		public void paint(Graphics g) {
@@ -169,8 +171,22 @@ class View extends JFrame{
 					g.drawImage(picsWestJump[picNumJump], x, y, Color.gray, this);
 					break;
 				}
-			}else {
-				
+			}else if (mode==Mode.IDLE) {
+				picNumIdle=(picNumIdle+1)%frameCountIdle;
+				switch(direction) {	
+				case NORTH:
+					g.drawImage(picsNorthIdle[picNumIdle], x, y, Color.gray, this);
+					break;
+				case SOUTH:
+					g.drawImage(picsSouthIdle[picNumIdle], x, y, Color.gray, this);
+					break;
+				case EAST:
+					g.drawImage(picsEastIdle[picNumIdle], x, y, Color.gray, this);
+					break;
+				default:
+					g.drawImage(picsWestIdle[picNumIdle], x, y, Color.gray, this);
+					break;
+				}
 			}
 			
 		}

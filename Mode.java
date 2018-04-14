@@ -3,7 +3,8 @@ public enum Mode {
 	DIE("die"),
 	JUMP("jump"),
 	FIRE("fire"),
-	FORWARD("forward");
+	FORWARD("forward"),
+	IDLE("idle");
 	
 	private String name = null;
 	
