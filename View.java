@@ -31,9 +31,11 @@ import javax.swing.*;
 class View extends JFrame{
 	final int frameCount = 10;
 	final int frameCountJump=8;
+	final int frameCountFire=4;
 	final int frameCountIdle=4;
 	int picNum = 0;
 	int picNumJump=0;
+	int picNumFire=0;
 	int picNumIdle=0;
 	int x;
 	int y;
@@ -47,6 +49,10 @@ class View extends JFrame{
 	public BufferedImage[] picsNorthJump;
 	public BufferedImage[] picsEastJump;
 	public BufferedImage[] picsWestJump;
+	public BufferedImage[] picsFire;
+	public BufferedImage[] picsNorthFire;
+	public BufferedImage[] picsEastFire;
+	public BufferedImage[] picsWestFire;
 	public BufferedImage[] picsEastIdle;
 	public BufferedImage[] picsWestIdle;
 	public BufferedImage[] picsNorthIdle;
@@ -62,6 +68,11 @@ class View extends JFrame{
 	final static int imgWidthJump = 165;
     
 	final static int imgHeightJump = 165;
+	
+	final static int imgWidthFire = 165;
+	
+	final static int imgHeightFire = 165;
+	
 	int createFrame=0;
 	JFrame frame = new JFrame();
 	JButton b=new JButton("Start");
@@ -78,6 +89,12 @@ class View extends JFrame{
 			BufferedImage imgEastJump = createImage(Direction.EAST, Mode.JUMP);
 			BufferedImage imgWestJump = createImage(Direction.WEST, Mode.JUMP);
 			
+			BufferedImage imgFire = createImage(Direction.SOUTH, Mode.FIRE);
+			BufferedImage imgNorthFire = createImage(Direction.SOUTH, Mode.FIRE);
+			BufferedImage imgEastFire = createImage(Direction.EAST, Mode.FIRE);
+			BufferedImage imgWestFire = createImage(Direction.WEST, Mode.FIRE);
+			
+			
 			BufferedImage imgIdle = createImage(Direction.ALL, Mode.IDLE);
 			
 	    	pics = new BufferedImage[10];
@@ -90,6 +107,11 @@ class View extends JFrame{
 	    	picsEastJump = new BufferedImage[8];
 	    	picsWestJump = new BufferedImage[8];
 	    	
+	    picsFire = new BufferedImage[4];
+	    	picsNorthFire = new BufferedImage[4];
+	    	picsEastFire = new BufferedImage[4];
+	    	picsWestFire = new BufferedImage[4];
+	    	 	
 	    	picsEastIdle = new BufferedImage[4];
 	    	picsWestIdle = new BufferedImage[4];
 	    	picsNorthIdle = new BufferedImage[4];
@@ -107,6 +129,13 @@ class View extends JFrame{
 	    		picsNorthJump[i] = imgNorthJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
 	    		picsEastJump[i] = imgEastJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
 	    		picsWestJump[i] = imgWestJump.getSubimage(imgWidthJump*i, 0, imgWidthJump, imgHeightJump);
+	    	}
+	    	
+	    	for(int i = 0; i < frameCountFire; i++) {
+	    		picsJump[i] = imgFire.getSubimage(imgWidthFire*i, 0, imgWidthFire, imgHeightFire);
+	    		picsNorthFire[i] = imgNorthFire.getSubimage(imgWidthFire*i, 0, imgWidthFire, imgHeightFire);
+	    		picsEastFire[i] = imgEastFire.getSubimage(imgWidthFire*i, 0, imgWidthFire, imgHeightFire);
+	    		picsWestFire[i] = imgWestFire.getSubimage(imgWidthFire*i, 0, imgWidthFire, imgHeightFire);
 	    	}
 	    	
 	    	for(int i = 0; i < frameCountIdle; i++) {	    		
@@ -155,7 +184,8 @@ class View extends JFrame{
 					g.drawImage(picsWest[picNum], x, y, Color.gray, this);
 					break;
 				}
-			}else if(mode==Mode.JUMP) {
+			}
+			else if(mode==Mode.JUMP) {
 				picNumJump=(picNumJump+1)%frameCountJump;
 				switch(direction) {	
 				case NORTH:
@@ -171,7 +201,25 @@ class View extends JFrame{
 					g.drawImage(picsWestJump[picNumJump], x, y, Color.gray, this);
 					break;
 				}
-			}else if (mode==Mode.IDLE) {
+			}
+			else if(mode==Mode.FIRE) {
+				picNumFire=(picNumFire+1)%frameCountFire;
+				switch(direction) {	
+				case NORTH:
+					g.drawImage(picsNorthFire[picNumFire], x, y, Color.gray, this);
+					break;
+				case SOUTH:
+					g.drawImage(picsFire[picNumFire], x, y, Color.gray, this);
+					break;
+				case EAST:
+					g.drawImage(picsEastFire[picNumFire], x, y, Color.gray, this);
+					break;
+				default:
+					g.drawImage(picsWestFire[picNumFire], x, y, Color.gray, this);
+					break;
+				}
+			}
+			else if (mode==Mode.IDLE) {
 				picNumIdle=(picNumIdle+1)%frameCountIdle;
 				switch(direction) {	
 				case NORTH:

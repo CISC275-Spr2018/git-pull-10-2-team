@@ -77,6 +77,14 @@ class Model{
             	mode=Mode.JUMP;
             }
         });
+		
+		j.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F,0),"f");
+		j.getActionMap().put("f", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	mode=Mode.FIRE;
+            }
+        });
 		this.width=width;
 		this.height=height;
 		this.imageWidth=imageWidth;
@@ -112,6 +120,9 @@ class Model{
 	}	
 	public Mode getMode() {
 		if(mode==Mode.JUMP) {
+			count++;
+		}
+		if(mode==Mode.FIRE) {
 			count++;
 		}
 		if(count==9) {
